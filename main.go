@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/rancher/hello-world/templates"
 	"net/http"
@@ -8,6 +9,10 @@ import (
 	"regexp"
 	"strings"
 )
+
+type NameRequest struct {
+	Name string
+}
 
 const defaultListenPort = "80"
 
@@ -55,6 +60,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, data)
 }
 
+func stdout(w http.ResponseWriter, r *http.Request) {
+	var n NameRequest
+
+	err := json.NewDecoder(r.Body).Decode(&n)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	fmt.Println("Name that was submitted: ", n.Name)
+}
+
 func main() {
 	webPort := os.Getenv("HTTP_PORT")
 	if webPort == "" {
@@ -63,6 +79,7 @@ func main() {
 
 	fmt.Println("Running http service at", webPort, "port")
 	http.HandleFunc("/", handler)
+	http.HandleFunc("/stdout", stdout)
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir(os.Getenv("PWD")))))
 	http.ListenAndServe(":"+webPort, nil)
 }

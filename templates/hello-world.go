@@ -57,6 +57,14 @@ const (
     </div>
     <br />`
 
+	webNameForm = `
+		<br />
+		<div id="name-wrapper">
+			<label for="name">Name: </label><input type="text" id="name" />
+			<button onclick="sendToStdOut()">Log Your Name</button>
+		</div>
+	`
+
 	webLinks = `    <div id='rancherLinks' class="row social">
       <a class="p-a-xs" href="https://rancher.com/docs"><img src="img/favicon.png" alt="Docs" height="25" width="25"></a>
       <a class="p-a-xs" href="https://slack.rancher.io/"><img src="img/icon-slack.svg" alt="slack" height="25" width="25"></a>
@@ -76,6 +84,24 @@ const (
               x.style.display = "none";
           }
       }
+
+      function sendToStdOut() {
+            console.log('here');
+			var xhttp = new XMLHttpRequest();
+
+			  xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                  alert("Your name has been logged to stdout!");
+		        }
+				else if (this.readyState == 4 && this.status == 500) {
+                  alert("Uh oh, we couldn't log your name.");
+                }
+              };
+
+			xhttp.open("POST", "stdout", true);
+			xhttp.setRequestHeader("Content-type", "application/json");
+			xhttp.send(JSON.stringify({Name: document.getElementById("name").value}));
+      }
     </script>
   </body>
 </html>`
@@ -84,5 +110,6 @@ const (
 ` + webServices + `
 ` + webLinks + `
 ` + webDetails + `
+` + webNameForm + `
 ` + webTail
 )
