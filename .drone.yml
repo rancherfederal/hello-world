@@ -20,7 +20,7 @@ pipeline:
   publish-image:
     image: plugins/docker
     dockerfile: package/Dockerfile
-    repo: rancher/hello-world
+    repo: rancherfederal/hello-world
     context: package/
     tag: 
     - ${DRONE_TAG}
